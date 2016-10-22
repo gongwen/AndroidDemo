@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TabIndicatorView">
+        <attr name="textSize" format="dimension" />
+        <attr name="indicatorPadding" format="dimension" />
+        <attr name="indicatorHeight" format="dimension" />
+        <attr name="radius" format="dimension" />
+        <attr name="selectedColor" format="color" />
+        <attr name="unSelectedColor" format="color" />
+        <attr name="type" format="integer">
+            <enum name="indicator" value="0" />
+            <enum name="rect" value="1" />
+            <enum name="roundRect" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AvgFlowLayout">
+        <attr name="avgCount" format="integer" />
+        <attr name="verticalDividerWidth" format="dimension" />
+        <attr name="horizontalDividerHeight" format="dimension" />
+        <attr name="isShowHorizontalDivider" format="boolean" />
+        <attr name="isShowVerticalDivider" format="boolean" />
+        <attr name="dividerColor" format="color" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,208 @@
+package gw.com.code.view;
+
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
+import android.text.TextPaint;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+
+import java.util.List;
+
+import gw.com.code.R;
+
+/**
+ * Created by GongWen on 16/10/15.
+ */
+
+public class TabIndicatorView extends View {
+    private List<String> titles;
+    private Paint mPaint;
+    private TextPaint mTextPaint;
+    private Paint.FontMetrics fm;
+
+    private float itemWidth;
+    private int itemCount;
+    private float indicatorHeight;
+    private int indicatorPadding;
+
+    private int selectedColor;
+    private int unSelectedColor;
+
+    private float mRadius;
+    private float textSize;
+
+    public static final int TYPE_INDICATOR = 0;//带指示器
+    public static final int TYPE_RECT = 1;//带矩形边框
+    public static final int TYPE_ROUND_RECT = 2;//带圆角矩形边框
+    private int type = TYPE_INDICATOR;
+
+    private int position;//被选中的位置
+    private int lastPosition = -1;
+
+    public TabIndicatorView(Context context) {
+        this(context, null, 0);
+    }
+
+    public TabIndicatorView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public TabIndicatorView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        //抗锯齿,防抖动
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TabIndicatorView);
+        type = a.getInt(R.styleable.TabIndicatorView_type, TYPE_INDICATOR);
+        textSize = a.getDimensionPixelSize(R.styleable.TabIndicatorView_textSize, 15);
+        indicatorPadding = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorPadding, 15);
+        indicatorHeight = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorHeight, 2);
+
+        mRadius = a.getDimensionPixelSize(R.styleable.TabIndicatorView_radius, 15);
+        selectedColor = a.getColor(R.styleable.TabIndicatorView_selectedColor, 0xffffffff);
+        unSelectedColor = a.getColor(R.styleable.TabIndicatorView_unSelectedColor, 0xff089FE6);
+
+        a.recycle();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (titles == null || titles.size() == 0) {
+            return;
+        }
+
+        itemCount = titles.size();
+        mTextPaint.setTextSize(textSize);
+        itemWidth = (getWidth() - getPaddingLeft() - getPaddingRight()) * 1.0f / itemCount;
+        //画指示器／边框
+        drawBorder(canvas);
+        //画文案
+        fm = mTextPaint.getFontMetrics();
+        for (int i = 0; i < itemCount; i++) {
+            if (i == position) {
+                mTextPaint.setColor(selectedColor);
+            } else {
+                mTextPaint.setColor(unSelectedColor);
+            }
+            canvas.drawText(titles.get(i), getPaddingLeft() + itemWidth * (i + 0.5f), getHeight() / 2 - fm.descent + (fm.bottom - fm.top) / 2, mTextPaint);
+        }
+    }
+
+    private void drawBorder(Canvas canvas) {
+        switch (type) {
+            case TYPE_INDICATOR:
+                drawIndicator(canvas);
+                break;
+            case TYPE_RECT:
+                drawRect(canvas);
+
+                break;
+            case TYPE_ROUND_RECT:
+                drawRoundRect(canvas);
+                break;
+        }
+    }
+
+    private void drawRoundRect(Canvas canvas) {
+        mPaint.setColor(unSelectedColor);
+        mPaint.setStyle(Paint.Style.FILL);
+        if (itemCount != 1) {
+            float[] leftOuterRadii = new float[]{mRadius, mRadius, 0, 0, 0, 0, mRadius, mRadius};
+            float[] rightOuterRadii = new float[]{0, 0, mRadius, mRadius, mRadius, mRadius, 0, 0};
+            if (position == 0) {
+                ShapeDrawable mDrawables = new ShapeDrawable(new RoundRectShape(leftOuterRadii, null, null));
+                mDrawables.getPaint().setColor(mPaint.getColor());
+                mDrawables.setBounds((int) (position * itemWidth), 0, (int) ((position + 1) * itemWidth), getHeight());
+                mDrawables.draw(canvas);
+            } else if (position == (itemCount - 1)) {
+                ShapeDrawable mDrawables = new ShapeDrawable(new RoundRectShape(rightOuterRadii, null, null));
+                mDrawables.getPaint().setColor(mPaint.getColor());
+                mDrawables.setBounds((int) (position * itemWidth), 0, (int) ((position + 1) * itemWidth), getHeight());
+                mDrawables.draw(canvas);
+            } else {
+                canvas.drawRect(position * itemWidth, 0, (position + 1) * itemWidth, getHeight(), mPaint);
+            }
+
+        } else {
+            canvas.drawRoundRect(new RectF(0, 0, getWidth(), getHeight()), mRadius, mRadius, mPaint);
+        }
+
+        mPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawRoundRect(new RectF(0, 0, getWidth(), getHeight()), mRadius, mRadius, mPaint);
+
+        for (int i = 1; i < itemCount; i++) {
+            canvas.drawLine(getPaddingLeft() + i * itemWidth, getPaddingTop(), getPaddingLeft() + i * itemWidth, getHeight() - getPaddingBottom(), mPaint);
+        }
+    }
+
+    private void drawRect(Canvas canvas) {
+        mPaint.setColor(unSelectedColor);
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(position * itemWidth, 0, (position + 1) * itemWidth, getHeight(), mPaint);
+        mPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(new RectF(0, 0, getWidth(), getHeight()), mPaint);
+        for (int i = 1; i < itemCount; i++) {
+            canvas.drawLine(getPaddingLeft() + i * itemWidth, getPaddingTop(), getPaddingLeft() + i * itemWidth, getHeight() - getPaddingBottom(), mPaint);
+        }
+    }
+
+    private void drawIndicator(Canvas canvas) {
+        mPaint.setColor(selectedColor);
+        mPaint.setStyle(Paint.Style.FILL);
+        float indicatorWidth = itemWidth - 2 * indicatorPadding;
+        float startX = getPaddingLeft() + position * itemWidth + indicatorPadding;
+        float startY = getHeight() - getPaddingBottom() - indicatorHeight;
+        float stopX = startX + indicatorWidth;
+        float stopY = startY;
+        canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                position = (int) ((event.getX() - getPaddingLeft()) / itemWidth);
+                selectPosition(position);
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void selectPosition(int position) {
+        if (mOnTabSelectedListener != null) {
+            if (position != lastPosition) {
+                mOnTabSelectedListener.onTabSelected(position);
+            } else {
+                mOnTabSelectedListener.onTabReselected(position);
+            }
+        }
+        this.position = position;
+        this.lastPosition = position;
+        postInvalidate();
+    }
+
+    private OnTabSelectedListener mOnTabSelectedListener;
+
+    public void setOnTabSelectedListener(OnTabSelectedListener mOnTabSelectedListener) {
+        this.mOnTabSelectedListener = mOnTabSelectedListener;
+    }
+
+    public interface OnTabSelectedListener {
+        public void onTabSelected(int position);
+
+        public void onTabReselected(int position);
+    }
+
+    public void setTitles(List<String> titles) {
+        this.titles = titles;
+    }
+}
