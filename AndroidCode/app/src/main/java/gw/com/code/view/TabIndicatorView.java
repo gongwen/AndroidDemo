@@ -7,11 +7,16 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.support.annotation.Nullable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import gw.com.code.R;
@@ -21,6 +26,11 @@ import gw.com.code.R;
  */
 
 public class TabIndicatorView extends View {
+    private final float density;
+
+    private OnTabSelectedListener mTabSelectedListener;
+    private OnTabSelectedListener mVpSelectedListener;
+
     private List<String> titles;
     private Paint mPaint;
     private TextPaint mTextPaint;
@@ -32,7 +42,7 @@ public class TabIndicatorView extends View {
     private int indicatorPadding;
 
     private int selectedColor;
-    private int unSelectedColor;
+    private int normalColor;
 
     private float mRadius;
     private float textSize;
@@ -55,6 +65,7 @@ public class TabIndicatorView extends View {
 
     public TabIndicatorView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        density = getResources().getDisplayMetrics().density;
         //抗锯齿,防抖动
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
@@ -63,14 +74,23 @@ public class TabIndicatorView extends View {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TabIndicatorView);
         type = a.getInt(R.styleable.TabIndicatorView_type, TYPE_INDICATOR);
         textSize = a.getDimensionPixelSize(R.styleable.TabIndicatorView_textSize, 15);
-        indicatorPadding = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorPadding, 15);
-        indicatorHeight = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorHeight, 2);
+        indicatorPadding = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorPadding, 0);
+        indicatorHeight = a.getDimensionPixelSize(R.styleable.TabIndicatorView_indicatorHeight, 0);
 
         mRadius = a.getDimensionPixelSize(R.styleable.TabIndicatorView_radius, 15);
         selectedColor = a.getColor(R.styleable.TabIndicatorView_selectedColor, 0xffffffff);
-        unSelectedColor = a.getColor(R.styleable.TabIndicatorView_unSelectedColor, 0xff089FE6);
+        normalColor = a.getColor(R.styleable.TabIndicatorView_normalColor, 0xff089FE6);
 
         a.recycle();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int width = View.resolveSize(0, widthMeasureSpec);
+        int height = View.resolveSize(0, heightMeasureSpec);
+        height += indicatorHeight;
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -91,9 +111,14 @@ public class TabIndicatorView extends View {
             if (i == position) {
                 mTextPaint.setColor(selectedColor);
             } else {
-                mTextPaint.setColor(unSelectedColor);
+                mTextPaint.setColor(normalColor);
             }
-            canvas.drawText(titles.get(i), getPaddingLeft() + itemWidth * (i + 0.5f), getHeight() / 2 - fm.descent + (fm.bottom - fm.top) / 2, mTextPaint);
+            if (type == TYPE_INDICATOR) {
+                canvas.drawText(titles.get(i), getPaddingLeft() + itemWidth * (i + 0.5f),
+                        (getHeight() - getPaddingTop() - getPaddingBottom() - indicatorHeight) / 2 - fm.descent + (fm.bottom - fm.top) / 2, mTextPaint);
+            } else {
+                canvas.drawText(titles.get(i), getPaddingLeft() + itemWidth * (i + 0.5f), (getHeight() - getPaddingTop() - getPaddingBottom()) / 2 - fm.descent + (fm.bottom - fm.top) / 2, mTextPaint);
+            }
         }
     }
 
@@ -104,7 +129,6 @@ public class TabIndicatorView extends View {
                 break;
             case TYPE_RECT:
                 drawRect(canvas);
-
                 break;
             case TYPE_ROUND_RECT:
                 drawRoundRect(canvas);
@@ -113,7 +137,7 @@ public class TabIndicatorView extends View {
     }
 
     private void drawRoundRect(Canvas canvas) {
-        mPaint.setColor(unSelectedColor);
+        mPaint.setColor(normalColor);
         mPaint.setStyle(Paint.Style.FILL);
         if (itemCount != 1) {
             float[] leftOuterRadii = new float[]{mRadius, mRadius, 0, 0, 0, 0, mRadius, mRadius};
@@ -145,7 +169,7 @@ public class TabIndicatorView extends View {
     }
 
     private void drawRect(Canvas canvas) {
-        mPaint.setColor(unSelectedColor);
+        mPaint.setColor(normalColor);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawRect(position * itemWidth, 0, (position + 1) * itemWidth, getHeight(), mPaint);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -159,11 +183,12 @@ public class TabIndicatorView extends View {
         mPaint.setColor(selectedColor);
         mPaint.setStyle(Paint.Style.FILL);
         float indicatorWidth = itemWidth - 2 * indicatorPadding;
-        float startX = getPaddingLeft() + position * itemWidth + indicatorPadding;
-        float startY = getHeight() - getPaddingBottom() - indicatorHeight;
-        float stopX = startX + indicatorWidth;
-        float stopY = startY;
-        canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+        RectF rectF = new RectF();
+        rectF.left = getPaddingLeft() + position * itemWidth + indicatorPadding;
+        rectF.top = getHeight() - indicatorHeight;
+        rectF.right = rectF.left + indicatorWidth;
+        rectF.bottom = getHeight();
+        canvas.drawRect(rectF, mPaint);
     }
 
     @Override
@@ -171,18 +196,34 @@ public class TabIndicatorView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 position = (int) ((event.getX() - getPaddingLeft()) / itemWidth);
-                selectPosition(position);
+                selectPosition(position, true);
                 break;
         }
         return super.onTouchEvent(event);
     }
 
-    public void selectPosition(int position) {
-        if (mOnTabSelectedListener != null) {
-            if (position != lastPosition) {
-                mOnTabSelectedListener.onTabSelected(position);
-            } else {
-                mOnTabSelectedListener.onTabReselected(position);
+    private void selectPosition(int position, boolean isTabSelected) {
+        if (isTabSelected) {
+            if (mVpSelectedListener != null) {
+                if (position != lastPosition) {
+                    mVpSelectedListener.onTabSelected(position);
+                } else {
+                    mTabSelectedListener.onTabReselected(position);
+                }
+            } else if (mTabSelectedListener != null) {//未和ViewPager关联时
+                if (position != lastPosition) {
+                    mTabSelectedListener.onTabSelected(position);
+                } else {
+                    mTabSelectedListener.onTabReselected(position);
+                }
+            }
+        } else {
+            if (mTabSelectedListener != null) {
+                if (position != lastPosition) {
+                    mTabSelectedListener.onTabSelected(position);
+                } else {
+                    mTabSelectedListener.onTabReselected(position);
+                }
             }
         }
         this.position = position;
@@ -190,19 +231,114 @@ public class TabIndicatorView extends View {
         postInvalidate();
     }
 
-    private OnTabSelectedListener mOnTabSelectedListener;
+    public void setOnTabSelectedListener(OnTabSelectedListener listener) {
+        mTabSelectedListener = listener;
+    }
 
-    public void setOnTabSelectedListener(OnTabSelectedListener mOnTabSelectedListener) {
-        this.mOnTabSelectedListener = mOnTabSelectedListener;
+    private void setOnTabSelectedListener(OnTabSelectedListener listener, boolean isTabSelected) {
+        if (isTabSelected) {
+            mTabSelectedListener = listener;
+        } else {
+            mVpSelectedListener = listener;
+        }
     }
 
     public interface OnTabSelectedListener {
-        public void onTabSelected(int position);
+        void onTabSelected(int position);
 
-        public void onTabReselected(int position);
+        void onTabReselected(int position);
+    }
+
+    public void setupWithViewPager(@Nullable ViewPager viewPager) {
+        PagerAdapter adapter = viewPager.getAdapter();
+        if (adapter == null) {
+            throw new IllegalArgumentException("ViewPager does not have a PagerAdapter set");
+        } else {
+            final int adapterCount = adapter.getCount();
+            List<String> titles = new ArrayList<>();
+            for (int i = 0; i < adapterCount; i++) {
+                CharSequence title = adapter.getPageTitle(i);
+                titles.add(title == null ? "" : title.toString());
+                setTitles(titles);
+            }
+            viewPager.addOnPageChangeListener(new TabLayoutOnPageChangeListener(this));
+            setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(viewPager), false);
+        }
+    }
+
+    public static class ViewPagerOnTabSelectedListener implements OnTabSelectedListener {
+        private final ViewPager mViewPager;
+
+        public ViewPagerOnTabSelectedListener(ViewPager viewPager) {
+            mViewPager = viewPager;
+        }
+
+        @Override
+        public void onTabSelected(int position) {
+            mViewPager.setCurrentItem(position);
+        }
+
+        @Override
+        public void onTabReselected(int position) {
+            // No-op
+        }
+    }
+
+    public static class TabLayoutOnPageChangeListener implements ViewPager.OnPageChangeListener {
+        private final WeakReference<TabIndicatorView> mTabIndicatorViewRef;
+
+        public TabLayoutOnPageChangeListener(TabIndicatorView tabIndicatorView) {
+            this.mTabIndicatorViewRef = new WeakReference(tabIndicatorView);
+        }
+
+        public void onPageScrollStateChanged(int state) {
+        }
+
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        public void onPageSelected(int position) {
+            TabIndicatorView tabIndicatorView = this.mTabIndicatorViewRef.get();
+            if (tabIndicatorView != null) {
+                tabIndicatorView.selectPosition(position, false);
+            }
+
+        }
+    }
+
+    public void setTabTextColors(int normalColor, int selectedColor) {
+        this.normalColor = normalColor;
+        this.selectedColor = selectedColor;
+        postInvalidate();
     }
 
     public void setTitles(List<String> titles) {
         this.titles = titles;
+        postInvalidate();
+    }
+
+    public void setIndicatorHeight(float indicatorHeight) {
+        this.indicatorHeight = indicatorHeight * density;
+        requestLayout();//重新执行onMeasure－>onLayout->onDraw
+    }
+
+    public void setIndicatorPadding(int indicatorPadding) {
+        this.indicatorPadding = (int) (indicatorPadding * density);
+        postInvalidate();
+    }
+
+    public void setRadius(float mRadius) {
+        this.mRadius = mRadius * density;
+        postInvalidate();
+    }
+
+    public void setTextSize(float textSize) {
+        this.textSize = textSize * indicatorPadding;
+        postInvalidate();
+    }
+
+    public void setType(int type) {
+        this.type = type;
+        requestLayout();
     }
 }

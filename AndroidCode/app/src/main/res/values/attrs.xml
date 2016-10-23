@@ -6,7 +6,7 @@
         <attr name="indicatorHeight" format="dimension" />
         <attr name="radius" format="dimension" />
         <attr name="selectedColor" format="color" />
-        <attr name="unSelectedColor" format="color" />
+        <attr name="normalColor" format="color" />
         <attr name="type" format="integer">
             <enum name="indicator" value="0" />
             <enum name="rect" value="1" />
