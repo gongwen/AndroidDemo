@@ -21,7 +21,7 @@ package gw.com.code.util;
  * 我的blog:http://hi.baidu.com/egg_chen 
  * 欢迎交流 
  */  
-public class Trans2RMB {  
+public class Trans2RMBUtil {
   
   /*  *//**
      * 测试程序的可行性 
@@ -29,7 +29,7 @@ public class Trans2RMB {
      *//*
     public static void main(String[] args) {  
         System.out.println("\n--------将数字转换成中文金额的大写形式------------\n");  
-        Trans2RMB t2r = new Trans2RMB();  
+        Trans2RMBUtil t2r = new Trans2RMBUtil();
         String s = t2r.cleanZero(t2r.splitNum(t2r.roundString("155555555.333")));
         // 如果转换过后是一个空串，则不输出屏幕  
         if(!"".equals(s)) {  
