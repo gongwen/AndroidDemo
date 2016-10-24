@@ -1,5 +1,6 @@
 package gw.com.code.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,4 +26,12 @@ public class DateUtil {
         return formatter.format(new Date());
     }
 
+    public static Date getDateByStr(String date, String dateType) {
+        SimpleDateFormat formatter = new SimpleDateFormat(dateType);
+        try {
+            return formatter.parse(date);
+        } catch (ParseException e) {
+            return new Date();
+        }
+    }
 }
