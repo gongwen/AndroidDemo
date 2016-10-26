@@ -41,11 +41,13 @@
 1. [DateUtil](./app/src/main/java/gw/com/code/util/DateUtil.java) &nbsp;&nbsp;&nbsp;日期处理工具类
 2. [DecodeUtil](./app/src/main/java/gw/com/code/util/DecodeUtil.java) &nbsp;&nbsp;&nbsp;编解码工具类
 3. [DeviceUtil](./app/src/main/java/gw/com/code/util/DeviceUtil.java) &nbsp;&nbsp;&nbsp;设备属性工具类
+4. [DrawTextUtil](./app/src/main/java/gw/com/code/util/DrawTextUtil.java) &nbsp;&nbsp;&nbsp;DrawText工具类
 
 ## E
 
 ## F
 1. [FileUtil](./app/src/main/java/gw/com/code/util/FileUtil.java) &nbsp;&nbsp;&nbsp;File处理工具类
+2. [FontUtil](./app/src/main/java/gw/com/code/util/FontUtil.java) &nbsp;&nbsp;&nbsp;计算字体的大小及位置
 
 ## G
 

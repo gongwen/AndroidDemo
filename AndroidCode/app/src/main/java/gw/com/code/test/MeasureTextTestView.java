@@ -9,6 +9,7 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import gw.com.code.util.DrawTextUtil;
 import gw.com.code.util.FontUtil;
 
 /**
@@ -92,10 +93,10 @@ public class MeasureTextTestView extends View {
         Rect rect = new Rect(0, centerY * 3 / 2, getWidth(), getHeight());
         canvas.drawRect(rect, mPaint);
         mTextPaint.setTextSize(65 * density);
-        FontUtil.drawTextInCenter(canvas, txt, (rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2, mTextPaint);
+        DrawTextUtil.drawTextInCenter(canvas, txt, (rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2, mTextPaint);
 
         int position = rect.top - 250;
         canvas.drawLine(0, position, getWidth(), position, mPaint);
-        FontUtil.drawText(canvas, txt, 0, position, mTextPaint, Paint.Align.LEFT);
+        DrawTextUtil.drawText(canvas, txt, 0, position, mTextPaint, Paint.Align.LEFT);
     }
 }

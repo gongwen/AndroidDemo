@@ -65,34 +65,4 @@ public class FontUtil {
         Paint.FontMetrics fm = mPaint.getFontMetrics();
         return fm.bottom - fm.top;
     }
-
-    public static void drawText(Canvas canvas, String text, float x, float y, Paint mPaint, Paint.Align align) {
-        if (canvas == null || TextUtils.isEmpty(text) || mPaint == null) {
-            return;
-        }
-        if (align == null || align == Paint.Align.LEFT) {
-            mPaint.setTextAlign(Paint.Align.LEFT);
-        } else if ((align == Paint.Align.CENTER)) {
-            mPaint.setTextAlign(Paint.Align.CENTER);
-        } else {
-            mPaint.setTextAlign(Paint.Align.RIGHT);
-        }
-        Paint.FontMetrics fm = mPaint.getFontMetrics();
-        if (NumberUtil.isNumeric(text)) {
-            y += FontUtil.getFontHeight(text, mPaint);
-        } else {
-            y += (FontUtil.getFontHeight(text, mPaint) - fm.ascent + fm.top);
-        }
-        canvas.drawText(text, x, y, mPaint);
-    }
-
-    public static void drawTextInCenter(Canvas canvas, String text, float x, float y, Paint mPaint) {
-        if (canvas == null || TextUtils.isEmpty(text) || mPaint == null) {
-            return;
-        }
-        mPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(text
-                , x
-                , getDrawTextYPosition(y, mPaint), mPaint);
-    }
 }
