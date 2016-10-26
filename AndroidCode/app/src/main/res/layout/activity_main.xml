@@ -10,6 +10,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <gw.com.code.test.MeasureTextTestView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal" />
+
         <gw.com.code.view.TabIndicatorView
             android:id="@+id/indicator1"
             android:layout_width="match_parent"
