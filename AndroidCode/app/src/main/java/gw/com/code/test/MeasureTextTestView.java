@@ -50,14 +50,15 @@ public class MeasureTextTestView extends View {
     private void drawText(Canvas canvas) {
 
         canvas.drawColor(0xffaaaaaa);
-//        String txt = "测试测试";
-//        String txt = "0123456789";
+//        String txt = "测试测试测试";
+//        String txt = "01234.56789";
         String txt = "abcdefghijklmn";
 
+        mTextPaint.setTextAlign(Paint.Align.LEFT);
         mTextPaint.setTextSize(50 * density);
         Paint.FontMetrics fm = mTextPaint.getFontMetrics();
 
-        float y = FontUtil.getFontHeight(txt, mTextPaint) +30;
+        float y = FontUtil.getFontHeight(txt, mTextPaint) + 30;
         canvas.drawText(txt, 0, y, mTextPaint);
         mPaint.setColor(Color.WHITE);
         canvas.drawLine(0, y + fm.top, getWidth(), y + fm.top, mPaint);
@@ -90,10 +91,11 @@ public class MeasureTextTestView extends View {
 
         Rect rect = new Rect(0, centerY * 3 / 2, getWidth(), getHeight());
         canvas.drawRect(rect, mPaint);
-        mTextPaint.setTextSize(30 * density);
-        canvas.drawText(txt,
-                FontUtil.getDrawTextXPosition(txt, (rect.left + rect.right) / 2,
-                        mTextPaint), FontUtil.getDrawTextYPosition((rect.top + rect.bottom) / 2,
-                        mTextPaint), mTextPaint);
+        mTextPaint.setTextSize(65 * density);
+        FontUtil.drawTextInCenter(canvas, txt, (rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2, mTextPaint);
+
+        int position = rect.top - 250;
+        canvas.drawLine(0, position, getWidth(), position, mPaint);
+        FontUtil.drawText(canvas, txt, 0, position, mTextPaint, Paint.Align.LEFT);
     }
 }

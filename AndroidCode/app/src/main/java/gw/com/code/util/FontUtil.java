@@ -1,5 +1,6 @@
 package gw.com.code.util;
 
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextUtils;
@@ -29,19 +30,13 @@ public class FontUtil {
         return mBound.height();
     }
 
-    public static float getDrawTextXPosition(String text, float baseCenterX, Paint mPaint) {
-        if (TextUtils.isEmpty(text) || mPaint == null) {
-            return baseCenterX;
-        }
-        return baseCenterX - FontUtil.getFontMeasureWidth(text, mPaint) / 2;
-    }
-
+    //竖直居中时，Y Position
     public static float getDrawTextYPosition(float baseCenterY, Paint mPaint) {
         if (mPaint == null) {
             return baseCenterY;
         }
         Paint.FontMetrics fm = mPaint.getFontMetrics();
-        return baseCenterY - fm.descent + (fm.bottom - fm.top) / 2;
+        return baseCenterY - (fm.descent + fm.ascent) / 2;
     }
 
     //get the smallest rectangle that encloses all of the characters
@@ -69,5 +64,35 @@ public class FontUtil {
         }
         Paint.FontMetrics fm = mPaint.getFontMetrics();
         return fm.bottom - fm.top;
+    }
+
+    public static void drawText(Canvas canvas, String text, float x, float y, Paint mPaint, Paint.Align align) {
+        if (canvas == null || TextUtils.isEmpty(text) || mPaint == null) {
+            return;
+        }
+        if (align == null || align == Paint.Align.LEFT) {
+            mPaint.setTextAlign(Paint.Align.LEFT);
+        } else if ((align == Paint.Align.CENTER)) {
+            mPaint.setTextAlign(Paint.Align.CENTER);
+        } else {
+            mPaint.setTextAlign(Paint.Align.RIGHT);
+        }
+        Paint.FontMetrics fm = mPaint.getFontMetrics();
+        if (NumberUtil.isNumeric(text)) {
+            y += FontUtil.getFontHeight(text, mPaint);
+        } else {
+            y += (FontUtil.getFontHeight(text, mPaint) - fm.ascent + fm.top);
+        }
+        canvas.drawText(text, x, y, mPaint);
+    }
+
+    public static void drawTextInCenter(Canvas canvas, String text, float x, float y, Paint mPaint) {
+        if (canvas == null || TextUtils.isEmpty(text) || mPaint == null) {
+            return;
+        }
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(text
+                , x
+                , getDrawTextYPosition(y, mPaint), mPaint);
     }
 }
