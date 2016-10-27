@@ -47,7 +47,8 @@
 
 ## F
 1. [FileUtil](./app/src/main/java/gw/com/code/util/FileUtil.java) &nbsp;&nbsp;&nbsp;File处理工具类
-2. [FontUtil](./app/src/main/java/gw/com/code/util/FontUtil.java) &nbsp;&nbsp;&nbsp;计算字体的大小及位置
+2. [FolderTextView](./app/src/main/java/gw/com/code/view/FolderTextView.java) &nbsp;&nbsp;&nbsp;可折叠的TextView
+3. [FontUtil](./app/src/main/java/gw/com/code/util/FontUtil.java) &nbsp;&nbsp;&nbsp;计算字体的大小及位置
 
 ## G
 

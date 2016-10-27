@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import gw.com.code.test.TestFragment;
+import gw.com.code.view.FolderTextView;
 import gw.com.code.view.TabIndicatorView;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        FolderTextView folderTextView= (FolderTextView) findViewById(R.id.folderTextView);
+        folderTextView.setFolderLine(5);
         setTabIndicator();
     }
 
