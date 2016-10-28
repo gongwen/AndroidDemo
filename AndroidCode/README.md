@@ -41,9 +41,9 @@
 ## D
 1. [DateUtil](./app/src/main/java/gw/com/code/util/DateUtil.java) &nbsp;&nbsp;&nbsp;日期处理工具类
 2. [DecodeUtil](./app/src/main/java/gw/com/code/util/DecodeUtil.java) &nbsp;&nbsp;&nbsp;编解码工具类
-3. [DeviceUtil](./app/src/main/java/gw/com/code/util/DeviceUtil.java) &nbsp;&nbsp;&nbsp;设备属性工具类
-4. [DotViewPager](./app/src/main/java/gw/com/code/view/DotViewPager.java) &nbsp;&nbsp;&nbsp;DrawText工具类
-5. [DrawTextUtil](./app/src/main/java/gw/com/code/util/DrawTextUtil.java) &nbsp;&nbsp;&nbsp;类似可翻页的GridView效果
+3. [DeviceUtil](./app/src/main/java/gw/com/code/util/DeviceUtil.java) &nbsp;&nbsp;&nbsp;设备尺寸属性工具类
+4. [DotViewPager](./app/src/main/java/gw/com/code/view/DotViewPager.java) &nbsp;&nbsp;&nbsp;类似可翻页的GridView效果
+5. [DrawTextUtil](./app/src/main/java/gw/com/code/util/DrawTextUtil.java) &nbsp;&nbsp;&nbsp;DrawText工具类
 
 ## E
 
