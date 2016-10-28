@@ -1,4 +1,4 @@
-package gw.com.code.base;
+package gw.com.code.base.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import gw.com.code.common.ViewHolder;
+import gw.com.code.base.viewholder.ListViewHolder;
 
 public abstract class BaseListAdapter<T> extends BaseAdapter {
     protected Context mContext;
@@ -48,13 +48,13 @@ public abstract class BaseListAdapter<T> extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = ViewHolder.get(mContext, convertView, parent,
+        ListViewHolder holder = ListViewHolder.get(mContext, convertView, parent,
                 layoutId, position);
         getView(holder, getItem(position));
         return holder.getConvertView();
     }
 
-    public abstract void getView(ViewHolder holder, T t);
+    public abstract void getView(ListViewHolder holder, T t);
 
     public void setData(List<T> dataList) {
         this.dataList = dataList;
