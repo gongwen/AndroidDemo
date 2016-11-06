@@ -10,10 +10,25 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/pathTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#eeeeee"
+            android:padding="30dp"
+            android:text="Path常用方法" />
+
         <gw.com.code.view.CheckView
             android:id="@+id/circleView"
             android:layout_width="match_parent"
             android:layout_height="300dp" />
+
+        <gw.com.code.view.leafloading.LeafLoadingView
+            android:id="@+id/leafLoadingView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="30dp" />
 
         <gw.com.code.view.DotViewPager
             android:id="@+id/mDotViewPager"

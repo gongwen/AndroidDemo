@@ -18,7 +18,7 @@ import gw.com.code.R;
  */
 
 public class CheckView extends View {
-    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG|Paint.DITHER_FLAG);
     private Bitmap bitmap;
     private int width;
     private int height;

@@ -1,11 +1,14 @@
 package gw.com.code;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ import gw.com.code.base.adapter.RVAdapter;
 import gw.com.code.base.viewholder.RecyclerViewHolder;
 import gw.com.code.test.TestFragment;
 import gw.com.code.test.TitleItemEntity;
+import gw.com.code.util.ActivityUtil;
 import gw.com.code.util.ToastUtil;
 import gw.com.code.view.DotViewPager;
 import gw.com.code.view.FolderTextView;
@@ -28,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.pathTv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityUtil.goPathActivity(MainActivity.this);
+            }
+        });
         setDotViewPager();
         setFolderTextView();
         setTabIndicator();
