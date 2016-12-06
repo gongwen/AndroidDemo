@@ -80,6 +80,8 @@
 
 ## R
 1. [RecyclerViewHolder](./app/src/main/java/gw/com/code/base/viewholder/RecyclerViewHolder.java) &nbsp;&nbsp;&nbsp;RecyclerView通用ViewHolder
+2. [RefreshPool](./app/src/main/java/gw/com/code/refresh/RefreshPool.java) &nbsp;&nbsp;&nbsp;RefreshPool轮询工具类
+3. [RefreshView](./app/src/main/java/gw/com/code/refresh/RefreshView.java) &nbsp;&nbsp;&nbsp;RefreshView轮询BaseView
 
 ## S
 1. [SDCardUtil](./app/src/main/java/gw/com/code/util/SDCardUtil.java) &nbsp;&nbsp;&nbsp;SD卡操作工具类
