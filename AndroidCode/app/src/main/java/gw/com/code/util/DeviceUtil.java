@@ -1,5 +1,6 @@
 package gw.com.code.util;
 
+import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -71,5 +72,13 @@ public class DeviceUtil {
                 return value / (metrics.xdpi * (1.0f / 25.4f));
         }
         return 0;
+    }
+
+    public static boolean isScreenOn() {
+        PowerManager pm = (PowerManager) MainApplication.getInstance().getSystemService(MainApplication.getInstance().POWER_SERVICE);
+        if (pm.isScreenOn()) {
+            return true;
+        }
+        return false;
     }
 }
